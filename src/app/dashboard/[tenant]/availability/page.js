@@ -59,7 +59,7 @@ export default function DashboardAvailabilityPage({ params }) {
       const res = await fetch(`/api/dashboard/${tenantSlug}/users?role=staff`);
       if (res.ok) {
         const data = await res.json();
-        setStaff(data.users);
+        setStaff(data.users || []);
       } else {
         showError('Failed to fetch staff.');
       }
@@ -109,7 +109,7 @@ export default function DashboardAvailabilityPage({ params }) {
           body: JSON.stringify(dataToSend),
         });
       } else {
-        res = await fetch(`/api/dashboard/${tenantSlug}/availability/${editingAvailability.id}`, {
+        res = await fetch(`/api/dashboard/${tenantSlug}/availability`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToSend),

@@ -32,7 +32,6 @@ export async function PUT(req, { params }) {
     });
     return new Response(JSON.stringify(updatedAvailability), { status: 200 });
   } catch (error) {
-    console.error('Error updating availability:', error);
     return new Response(JSON.stringify({ error: 'Availability not found or not authorized' }), { status: 404 });
   }
 }
