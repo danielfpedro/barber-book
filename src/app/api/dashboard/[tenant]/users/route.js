@@ -26,7 +26,7 @@ export async function GET(req, { params }) {
     select: { id: true, email: true, role: true }, // Select specific fields for security
   });
 
-  return new Response(JSON.stringify({ tenantId, roleFilter, users }), { status: 200 });
+  return new Response(JSON.stringify(users), { status: 200 });
 }
 
 export async function POST(req, { params }) {

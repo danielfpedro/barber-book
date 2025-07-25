@@ -68,6 +68,8 @@ export async function PUT(req, { params }) {
   const { availabilityId } = await params;
   const { staffId, dayOfWeek, startTime, endTime } = await req.json();
 
+  console.log(`Attempting to update availabilityId: ${availabilityId} for tenantId: ${authResult.session.user.tenantId}`);
+
   if (!availabilityId || !staffId || dayOfWeek === undefined || !startTime || !endTime) {
     return new Response(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
   }

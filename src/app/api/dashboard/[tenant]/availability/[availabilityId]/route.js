@@ -26,12 +26,13 @@ export async function PUT(req, { params }) {
       data: {
         staffId: parseInt(staffId),
         dayOfWeek: parseInt(dayOfWeek),
-        startTime: dayjs(`1970-01-01T${startTime}:00Z`).toDate(),
-        endTime: dayjs(`1970-01-01T${endTime}:00Z`).toDate(),
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
       },
     });
     return new Response(JSON.stringify(updatedAvailability), { status: 200 });
   } catch (error) {
+    console.error('Error updating availability:', error);
     return new Response(JSON.stringify({ error: 'Availability not found or not authorized' }), { status: 404 });
   }
 }

@@ -93,14 +93,26 @@ export default function DashboardAvailabilityPage({ params }) {
     reset();
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     try {
+      const dataToSend = {
+        ...formData,
+        startTime: dayjs(`2000-01-01 ${formData.startTime}`).toISOString(),
+        endTime: dayjs(`2000-01-01 ${formData.endTime}`).toISOString(),
+      };
+
       let res;
       if (editingAvailability) {
         res = await fetch(`/api/dashboard/${tenantSlug}/availability/${editingAvailability.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+          body: JSON.stringify(dataToSend),
+        });
+      } else {
+        res = await fetch(`/api/dashboard/${tenantSlug}/availability/${editingAvailability.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataToSend),
         });
       }
 
@@ -113,6 +125,7 @@ export default function DashboardAvailabilityPage({ params }) {
         showError(errorData.error || `Failed to ${editingAvailability ? 'update' : 'create'} availability.`);
       }
     } catch (error) {
+      console.error('Error submitting availability:', error);
       showError(`An error occurred while ${editingAvailability ? 'updating' : 'creating'} availability.`);
     }
   };
