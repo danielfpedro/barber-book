@@ -13,11 +13,15 @@ export async function GET(req, { params }) {
 
   const { searchParams } = new URL(req.url);
   const roleFilter = searchParams.get('role');
+  let prismaRoleFilter = roleFilter;
+  if (roleFilter === 'staff') {
+    prismaRoleFilter = USER_ROLES.TENANT_STAFF;
+  }
 
   const users = await prisma.user.findMany({
     where: {
       tenantId: tenantId,
-      ...(roleFilter && { role: roleFilter }),
+      ...(prismaRoleFilter && { role: prismaRoleFilter }),
     },
     select: { id: true, email: true, role: true }, // Select specific fields for security
   });
