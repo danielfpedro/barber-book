@@ -18,10 +18,6 @@ export default function CustomersPage({ params }) {
   useEffect(() => {
     if (status === 'loading') return;
 
-    if (!session || session.user.type !== 'user' || !(session.user.role === 'tenant_admin' || session.user.role === 'tenant_staff') || session.user.tenantSlug !== tenantSlug) {
-      router.push('/login');
-      return;
-    }
 
     const fetchCustomers = async () => {
       try {

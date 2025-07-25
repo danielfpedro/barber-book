@@ -6,19 +6,16 @@ export async function GET(req, { params }) {
   try {
     const { tenant: tenantSlug } = params;
 
-    const authResult = await authorize(req, [USER_ROLES.BARBER, USER_ROLES.ADMIN], tenantSlug);
-    if (authResult.status !== 200) {
-      return authResult;
+    const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN, USER_ROLES.TENANT_STAFF], tenantSlug);
+    if (!authResult.authorized) {
+      return new Response(JSON.stringify({ error: authResult.message }), { status: authResult.status });
     }
 
-    const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-    if (!tenant) {
-      return new Response(JSON.stringify({ error: 'Tenant not found' }), { status: 404 });
-    }
+    const tenantId = authResult.session.user.tenantId;
 
     const customers = await prisma.booking.findMany({
       where: {
-        tenantId: tenant.id,
+        tenantId: tenantId,
       },
       select: {
         customerName: true,
