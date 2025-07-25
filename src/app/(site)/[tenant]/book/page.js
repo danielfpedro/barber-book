@@ -108,7 +108,7 @@ export default function BookingWizardPage({ params }) {
 
       console.log('Sending booking data:', bookingData);
 
-      const res = await fetch(`/api/barber/${tenantSlug}/bookings`, {
+      const res = await fetch(`/api/${tenantSlug}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingData),
@@ -133,8 +133,8 @@ export default function BookingWizardPage({ params }) {
     const fetchServicesAndStaff = async () => {
       try {
         const [servicesRes, staffRes] = await Promise.all([
-          fetch(`/api/barber/${tenantSlug}/services`),
-          fetch(`/api/barber/${tenantSlug}/staff`),
+          fetch(`/api/${tenantSlug}/services`),
+          fetch(`/api/${tenantSlug}/staff`),
         ]);
 
         if (servicesRes.ok) {
@@ -169,7 +169,7 @@ export default function BookingWizardPage({ params }) {
           if (selectedStaff) {
             query.append('staffId', selectedStaff.id);
           }
-          const res = await fetch(`/api/barber/${tenantSlug}/availability?${query.toString()}`);
+          const res = await fetch(`/api/${tenantSlug}/availability?${query.toString()}`);
           if (res.ok) {
             const data = await res.json();
             setAvailableSlots(data);

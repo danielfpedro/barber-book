@@ -26,6 +26,7 @@ export default function DashboardLayout({ children }) {
     { name: 'Services', href: `/dashboard/${session.user.tenantSlug}/services` },
     { name: 'Availability', href: `/dashboard/${session.user.tenantSlug}/availability` },
     { name: 'Users & Roles', href: `/dashboard/${session.user.tenantSlug}/users` },
+    { name: 'My Customers', href: `/dashboard/${session.user.tenantSlug}/customers` },
     { name: 'Settings', href: `/dashboard/${session.user.tenantSlug}/settings` },
   ];
 

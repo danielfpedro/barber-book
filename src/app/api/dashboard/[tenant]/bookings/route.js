@@ -4,12 +4,8 @@ import { USER_ROLES } from '@/lib/rbac';
 import dayjs from 'dayjs';
 
 export async function GET(req, { params }) {
-  const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN, USER_ROLES.TENANT_STAFF]);
-  if (!authResult.authorized) {
-    return new Response(JSON.stringify({ error: authResult.message }), { status: authResult.status });
-  }
-
-  const tenantSlug = params.tenant;
+  const { tenant: tenantSlug } = await params;
+  const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN, USER_ROLES.TENANT_STAFF], tenantSlug);
   const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
 
   if (!tenant) {

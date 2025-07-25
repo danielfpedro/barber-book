@@ -10,16 +10,16 @@ export default function BarberLayout({ children, params }) {
   const tenantSlug = tenant;
 
   const navigation = [
-    { name: 'Home', href: `/barber/${tenantSlug}` },
-    { name: 'Services', href: `/barber/${tenantSlug}/services` },
-    { name: 'Book Now', href: `/barber/${tenantSlug}/book` },
+    { name: 'Home', href: `/${tenantSlug}` },
+    { name: 'Services', href: `/${tenantSlug}/services` },
+    { name: 'Book Now', href: `/${tenantSlug}/book` },
   ];
 
   return (
     <div>
       <header className="bg-gray-800 text-white p-4">
         <nav className="container mx-auto flex justify-between items-center">
-          <Link href={`/barber/${tenantSlug}`} className="text-xl font-bold">{tenantSlug} Barbershop</Link>
+          <Link href={`/${tenantSlug}`} className="text-xl font-bold">{tenantSlug} Barbershop</Link>
           <div className="space-x-4">
             {navigation.map((item) => (
               <Link key={item.name} href={item.href} className={`hover:text-gray-300 ${pathname === item.href ? 'font-bold' : ''}`}>
