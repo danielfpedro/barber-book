@@ -9,15 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.6",
+    "@hookform/resolvers": "^5.1.1",
+    "@prisma/client": "^6.12.0",
+    "bcrypt": "^6.0.0",
+    "daisyui": "^5.0.47",
+    "dayjs": "^1.11.13",
+    "next": "15.4.4",
+    "next-auth": "^4.24.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.4"
+    "react-hook-form": "^7.61.1",
+    "react-toastify": "^11.0.5",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.11",
     "eslint": "^9",
     "eslint-config-next": "15.4.4",
-    "@eslint/eslintrc": "^3"
+    "prisma": "^6.12.0",
+    "tailwindcss": "^4.1.11"
   }
 }

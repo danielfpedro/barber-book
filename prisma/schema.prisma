@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id             Int      @id @default(autoincrement())
+  name           String
+  slug           String   @unique
+  createdAt      DateTime @default(now())
+  users          User[]
+  services       Service[]
+  bookings       Booking[]
+  endUserTenants EndUserTenant[]
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  tenantId      Int
+  email         String   @unique
+  passwordHash  String
+  role          String
+  createdAt     DateTime @default(now())
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  availability  StaffAvailability[]
+  bookings      Booking[]
+  services      Service[] @relation("StaffServices")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  tenantId    Int
+  name        String
+  description String?
+  price       Float
+  duration    Int
+  createdAt   DateTime @default(now())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  bookings    Booking[]
+  staff       User[]    @relation("StaffServices")
+}
+
+model StaffAvailability {
+  id          Int      @id @default(autoincrement())
+  tenantId    Int
+  staffId     Int
+  dayOfWeek   Int
+  startTime   DateTime
+  endTime     DateTime
+  staff       User     @relation(fields: [staffId], references: [id])
+}
+
+model EndUser {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  tenants       EndUserTenant[]
+  bookings      Booking[]
+}
+
+model EndUserTenant {
+  endUserId Int
+  tenantId  Int
+  endUser   EndUser @relation(fields: [endUserId], references: [id])
+  tenant    Tenant  @relation(fields: [tenantId], references: [id])
+
+  @@id([endUserId, tenantId])
+}
+
+model Booking {
+  id             Int      @id @default(autoincrement())
+  tenantId       Int
+  endUserId      Int?
+  customerName   String
+  customerEmail  String
+  customerPhone  String?
+  serviceId      Int
+  staffId        Int
+  startTime      DateTime
+  endTime        DateTime
+  status         String   @default("confirmed")
+  createdAt      DateTime @default(now())
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  endUser        EndUser? @relation(fields: [endUserId], references: [id])
+  service        Service  @relation(fields: [serviceId], references: [id])
+  staff          User     @relation(fields: [staffId], references: [id])
+}
