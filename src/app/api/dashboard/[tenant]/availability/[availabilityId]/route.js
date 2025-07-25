@@ -9,14 +9,10 @@ export async function PUT(req, { params }) {
     return new Response(JSON.stringify({ error: authResult.message }), { status: authResult.status });
   }
 
-  const tenantSlug = params.tenant;
-  const availabilityId = parseInt(params.availabilityId);
+  const { tenant: tenantSlug, availabilityId: availabilityIdParam } = await params;
+  const availabilityId = parseInt(availabilityIdParam);
 
-  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-
-  if (!tenant) {
-    return new Response(JSON.stringify({ error: 'Tenant not found' }), { status: 404 });
-  }
+  const tenantId = authResult.session.user.tenantId;
 
   const { staffId, dayOfWeek, startTime, endTime } = await req.json();
 
@@ -26,7 +22,7 @@ export async function PUT(req, { params }) {
 
   try {
     const updatedAvailability = await prisma.staffAvailability.update({
-      where: { id: availabilityId, tenantId: tenant.id },
+      where: { id: availabilityId, tenantId: tenantId },
       data: {
         staffId: parseInt(staffId),
         dayOfWeek: parseInt(dayOfWeek),
@@ -46,18 +42,14 @@ export async function DELETE(req, { params }) {
     return new Response(JSON.stringify({ error: authResult.message }), { status: authResult.status });
   }
 
-  const tenantSlug = params.tenant;
-  const availabilityId = parseInt(params.availabilityId);
+  const { tenant: tenantSlug, availabilityId: availabilityIdParam } = await params;
+  const availabilityId = parseInt(availabilityIdParam);
 
-  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-
-  if (!tenant) {
-    return new Response(JSON.stringify({ error: 'Tenant not found' }), { status: 404 });
-  }
+  const tenantId = authResult.session.user.tenantId;
 
   try {
     await prisma.staffAvailability.delete({
-      where: { id: availabilityId, tenantId: tenant.id },
+      where: { id: availabilityId, tenantId: tenantId },
     });
     return new Response(null, { status: 204 });
   } catch (error) {

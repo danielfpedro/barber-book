@@ -3,17 +3,17 @@ import { authorize } from '@/lib/apiAuth';
 import { USER_ROLES } from '@/lib/rbac';
 
 export async function GET(req, { params }) {
-  const { tenant: tenantSlug } = params;
+  const { tenant: tenantSlug } = await params;
   const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN, USER_ROLES.TENANT_STAFF], tenantSlug);
 
-  if (authResult.error) {
-    return new Response(JSON.stringify({ message: authResult.error }), { status: authResult.status });
+  if (!authResult.authorized) {
+    return new Response(JSON.stringify({ message: authResult.message }), { status: authResult.status });
   }
 
   try {
     const availability = await prisma.staffAvailability.findMany({
       where: {
-        tenantId: authResult.user.tenantId,
+        tenantId: authResult.session.user.tenantId,
       },
       include: {
         staff: { select: { id: true, email: true } },
@@ -27,11 +27,11 @@ export async function GET(req, { params }) {
 }
 
 export async function POST(req, { params }) {
-  const { tenant: tenantSlug } = params;
+  const { tenant: tenantSlug } = await params;
   const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN], tenantSlug);
 
-  if (authResult.error) {
-    return new Response(JSON.stringify({ message: authResult.error }), { status: authResult.status });
+  if (!authResult.authorized) {
+    return new Response(JSON.stringify({ message: authResult.message }), { status: authResult.status });
   }
 
   const { staffId, dayOfWeek, startTime, endTime } = await req.json();
@@ -43,7 +43,7 @@ export async function POST(req, { params }) {
   try {
     const newAvailability = await prisma.staffAvailability.create({
       data: {
-        tenantId: authResult.user.tenantId,
+        tenantId: authResult.session.user.tenantId,
         staffId: parseInt(staffId),
         dayOfWeek: parseInt(dayOfWeek),
         startTime: new Date(startTime),
@@ -58,14 +58,14 @@ export async function POST(req, { params }) {
 }
 
 export async function PUT(req, { params }) {
-  const { tenant: tenantSlug } = params;
+  const { tenant: tenantSlug } = await params;
   const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN], tenantSlug);
 
-  if (authResult.error) {
-    return new Response(JSON.stringify({ message: authResult.error }), { status: authResult.status });
+  if (!authResult.authorized) {
+    return new Response(JSON.stringify({ message: authResult.message }), { status: authResult.status });
   }
 
-  const { availabilityId } = params;
+  const { availabilityId } = await params;
   const { staffId, dayOfWeek, startTime, endTime } = await req.json();
 
   if (!availabilityId || !staffId || dayOfWeek === undefined || !startTime || !endTime) {
@@ -90,14 +90,14 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const { tenant: tenantSlug } = params;
+  const { tenant: tenantSlug } = await params;
   const authResult = await authorize(req, [USER_ROLES.TENANT_ADMIN], tenantSlug);
 
-  if (authResult.error) {
-    return new Response(JSON.stringify({ message: authResult.error }), { status: authResult.status });
+  if (!authResult.authorized) {
+    return new Response(JSON.stringify({ message: authResult.message }), { status: authResult.status });
   }
 
-  const { availabilityId } = params;
+  const { availabilityId } = await params;
 
   if (!availabilityId) {
     return new Response(JSON.stringify({ message: 'Missing availability ID' }), { status: 400 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -28,7 +28,7 @@ const daysOfWeek = [
 
 export default function DashboardAvailabilityPage({ params }) {
   const { data: session } = useSession();
-  const tenantSlug = params.tenant;
+  const tenantSlug = React.use(params).tenant;
   const [availability, setAvailability] = useState([]);
   const [staff, setStaff] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,7 +59,7 @@ export default function DashboardAvailabilityPage({ params }) {
       const res = await fetch(`/api/dashboard/${tenantSlug}/users?role=staff`);
       if (res.ok) {
         const data = await res.json();
-        setStaff(data);
+        setStaff(data.users);
       } else {
         showError('Failed to fetch staff.');
       }
